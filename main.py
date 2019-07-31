@@ -7,6 +7,7 @@ import time
 from config import  conf
 
 class scraper():
+    pg = 1
     def connect(self):
         url ="https://odibets.com/"
         self.driver = webdriver.Chrome()
@@ -22,7 +23,9 @@ class scraper():
         test_elem = self.driver.find_elements_by_xpath("//div[@class='l-container m-pagination']//td")
         return (len(test_elem))
     def next_page(self,page):
+        self.pg +=1 
         page =str(page)
+        print("current page",page)
         self.driver.get("https://odibets.com/sport/soccer?p="+page)
     def balance(self):
         bal=self.driver.find_element(By.XPATH, '//div[@class="l-account"]/a').text
@@ -92,13 +95,20 @@ class scraper():
     def main(self):
         self.connect()
         self.balance()
-        self.nav()
-##        self.next_page()
-        for i in self.matches():
-            self.driver.get(i)
-            self.driver.implicitly_wait(3)
-            print(self.match_details())
-            #self.bet("1",1)
+        while True:
+            try:
+                self.nav()
+                print("page",self.page())
+                for i in range(int (self.page())):
+                    print("page",self.page())
+                    for i in self.matches():
+                        self.driver.get(i)
+                        self.driver.implicitly_wait(3)
+                        print(self.match_details())
+                    self.next_page(self.pg)
+            except:
+                print("error")
+                    #self.bet("1",1)
             
 
 
